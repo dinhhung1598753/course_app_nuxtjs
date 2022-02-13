@@ -101,21 +101,17 @@ export default {
     async login() {
       if (this.$refs.form.validate()) {
         try {
-          await this.$auth
-            .loginWith('local', {
-              data: {
-                email: this.email,
-                password: this.password,
-              },
-            })
-            .then((res) => {
-              // console.log(res.data)
-              this.$auth.setToken('local', 'Bearer ' + res.data)
-              //   await this.$auth.setRefreshToken('local', res.data.refresh);
-              this.$auth.setUserToken(res.data)
-              this.$router.push('/')
-            })
-          // console.log(res)
+          const res = await this.$auth.loginWith('local', {
+            data: {
+              email: this.email,
+              password: this.password,
+            },
+          })
+          // console.log(res.data)
+          await this.$auth.setToken('local', 'Bearer ' + res.data)
+          //   await this.$auth.setRefreshToken('local', res.data.refresh);
+          await this.$auth.setUserToken(res.data)
+          this.$router.push('/')
         } catch (err) {
           this.error = err.data
         }

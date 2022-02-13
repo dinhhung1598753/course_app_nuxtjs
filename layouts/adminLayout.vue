@@ -31,23 +31,23 @@
       <v-spacer />
       <div class="text-center">
         <v-menu offset-y>
-          <template  #activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <!-- <v-btn color="primary" dark v-bind="attrs" v-on="on">
               Dropdown
             </v-btn> -->
             <v-btn dark v-bind="attrs" v-on="on">
               <v-icon>mdi-account-circle-outline</v-icon>
-              hung
+              {{fullName}}
             </v-btn>
           </template>
           <v-list>
-            <v-list-item to="/abc" router >
+            <v-list-item to="/abc" router>
               <v-list-item-title>Thông tin tài khoản</v-list-item-title>
             </v-list-item>
             <v-list-item to="/abc" router>
               <v-list-item-title>Đổi mật khẩu</v-list-item-title>
             </v-list-item>
-            <v-list-item to="/abc" router>
+            <v-list-item @click="logout">
               <v-list-item-title>Đăng xuất</v-list-item-title>
             </v-list-item>
           </v-list>
@@ -76,7 +76,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :class="{ logout: true }" to="/aaa" router>
+        <v-list-item :class="{ logout: true }" @click="logout">
           <v-list-item-action>
             <v-icon> mdi-logout </v-icon>
           </v-list-item-action>
@@ -94,75 +94,71 @@
 
 <script>
 export default {
-  name: 'AdminLayout',
+  name: 'DefaultLayout',
+  middleware: ["isAuthenticated"],
   data() {
     return {
       clipped: false,
       drawer: false,
       fixed: false,
-      
+
+
       managerItems: [
         {
           icon: 'mdi-apps',
+          title: 'Home',
+          to: '/admin',
+        },
+        {
+          icon: 'mdi-account-group-outline',
           title: 'Account',
-          to: '/',
+          to: '/admin/account',
         },
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-text-box-multiple',
           title: 'Course',
-          to: '/inspire',
+          to: '/admin/courses',
         },
         {
-          icon: 'mdi-apps',
+          icon: 'mdi-file-document-outline',
           title: 'Lesson',
-          to: '/user',
+          to: '/admin/lessons',
         },
         {
           icon: 'mdi-apps',
           title: 'Document',
-          to: '/user',
+          to: '/admin/documents',
         },
       ],
       teacherItems: [
-        // {
-        //   icon: 'mdi-apps',
-        //   title: 'Account',
-        //   to: '/',
-        // },
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-apps',
+          title: 'Home',
+          to: '/admin',
+        },
+        {
+          icon: 'mdi-text-box-multiple',
           title: 'Course',
-          to: '/inspire',
+          to: '/admin/courses',
         },
         {
           icon: 'mdi-apps',
           title: 'Lesson',
-          to: '/user',
+          to: '/admin/lessons',
         },
         {
-          icon: 'mdi-apps',
+          icon: 'mdi-file-document-outline',
           title: 'Document',
-          to: '/user',
+          to: '/admin/documents',
         },
       ],
-      studentItems: [
+      items: [
         {
           icon: 'mdi-apps',
           title: 'Welcome',
           to: '/',
         },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire',
-        },
-        {
-          icon: 'mdi-apps',
-          title: 'User',
-          to: '/user',
-        },
       ],
-      items : this.$store.getters.isManager ? this.managerItems : (this.$store.getters.isTeacher ? this.teacherItems : this.studentItems),
       userActions: [
         {
           icon: 'mdi-account-circle-outline',
@@ -184,7 +180,27 @@ export default {
       right: true,
       rightDrawer: false,
       title: 'Vuetify.js',
+      fullName: ''
     }
+  },
+  created() {
+    
+      // this.items = this.$store.getters.isManager
+      // ? this.managerItems
+      // : this.$store.getters.isTeacher
+      // ? this.teacherItems
+      // : this.studentItems
+
+    this.fullName = this.$store.getters.getUserInfo.fullName;
+    
+  },
+  methods: {
+    logout() {
+      
+      this.$auth.logout();
+      this.$router.push('/login')
+      
+    },
   },
 }
 </script>

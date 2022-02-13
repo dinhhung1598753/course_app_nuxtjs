@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <div class="top">
-      <v-btn :class="{ 'find-course': true }" value="recent">
+      <v-btn :class="{ 'find-course': true }" value="recent" to="/course">
         <v-icon>mdi-magnify</v-icon>
         <span>Find Course</span>
       </v-btn>
@@ -12,16 +12,15 @@
       :class="{ 'course-card': true }"
       color="#26c6da"
       dark
-      max-width="300"
+      width="300"
       :to="'/course/' + item.key"
     >
       <v-card-title>
-        <span class="text-h5 font-weight-bold">{{ item.title }}</span>
+        <span class="text-h5 font-weight-bold">{{ item.name }}</span>
       </v-card-title>
 
       <v-card-text class="text-h7 font-weight-light">
-        "Turns out semicolon-less style is easier and safer in TS because most
-        gotcha edge cases are type invalid as well."
+        {{ item.description }}
       </v-card-text>
 
       <v-card-actions>
@@ -31,7 +30,7 @@
           </v-list-item-avatar>
 
           <v-list-item-content>
-            <v-list-item-title>{{ item.artist }}</v-list-item-title>
+            <v-list-item-title>{{ item.user.fullName }}</v-list-item-title>
           </v-list-item-content>
 
           <v-row align="center" justify="end">
@@ -50,27 +49,28 @@
 <script>
 export default {
   name: 'IndexPage',
-  middleware: ['isAuthorization'],
+  middleware: ['isAuthenticated'],
   data() {
     return {
+      color: '#1F7087',
       items: [
-        {
-          color: '#1F7087',
-          src: 'https://cdn.vuetifyjs.com/images/cards/foster.jpg',
-          title: 'Supermodel',
-          artist: 'Foster the People',
-          key: 'gt1',
-        },
-        {
-          color: '#952175',
-          src: 'https://cdn.vuetifyjs.com/images/cards/halcyon.png',
-          title: 'Halcyon Days',
-          artist: 'Ellie Goulding',
-          key: 'gt2',
-        },
+        
       ],
     }
   },
+  created(){
+    try {
+        this.$axios
+          .get('/users/course'
+          )
+          .then((res) => {
+            // console.log("data: ",res.data[0])
+            this.items = res.data
+          })
+      } catch (err) {
+        return err
+      }
+  }
 }
 </script>
 <style scoped>
