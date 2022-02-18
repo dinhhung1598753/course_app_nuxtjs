@@ -94,18 +94,14 @@ export default {
         {
           icon: 'mdi-text-box-multiple',
           title: 'Course',
-          to: '/admin/courses',
+          to: '/admin/course',
         },
         {
           icon: 'mdi-file-document-outline',
           title: 'Lesson',
-          to: '/admin/lessons',
+          to: '/admin/lesson',
         },
-        {
-          icon: 'mdi-apps',
-          title: 'Document',
-          to: '/admin/documents',
-        },
+        
       ],
       teacherItems: [
         {
@@ -116,18 +112,14 @@ export default {
         {
           icon: 'mdi-text-box-multiple',
           title: 'Course',
-          to: '/admin/courses',
+          to: '/admin/course',
         },
         {
           icon: 'mdi-apps',
           title: 'Lesson',
-          to: '/admin/lessons',
+          to: '/admin/lesson',
         },
-        {
-          icon: 'mdi-file-document-outline',
-          title: 'Document',
-          to: '/admin/documents',
-        },
+        
       ],
       // studentItems: [
       //   {

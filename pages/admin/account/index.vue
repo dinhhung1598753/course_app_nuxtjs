@@ -8,8 +8,6 @@
   >
     <template #top>
       <v-toolbar flat>
-        <!-- <v-toolbar-title class="text-uppercase">Tours</v-toolbar-title> -->
-        <!-- <v-divider class="mx-4" inset vertical></v-divider> -->
         <v-text-field
           v-model="search"
           append-icon="mdi-magnify"
@@ -18,22 +16,22 @@
           hide-details
         ></v-text-field>
         <v-spacer></v-spacer>
-        <v-btn
+        <!-- <v-btn
           color="primary"
           class="mb-2 bg-gradient-primary"
           dark
           @click="newAccount"
         >
-          New course
-        </v-btn>
+          New Account
+        </v-btn> -->
       </v-toolbar>
     </template>
 
     <template #[`item.actions`]="{ item }">
       <!-- <v-icon small @click="viewTour(item)"> mdi-eye-outline </v-icon> -->
-      <v-icon small @click="updateAccount(item)">
+      <!-- <v-icon small @click="updateAccount(item)">
         mdi-square-edit-outline
-      </v-icon>
+      </v-icon> -->
       <v-icon small @click="deleteAccount(item)">
         mdi-trash-can-outline
       </v-icon>
@@ -75,30 +73,30 @@ export default {
     }
   },
   methods: {
-    newAccount() {
-      this.$router.push('/admin/account/new')
-      //   if (this.$store.getters.isManager) {
-      //     this.$router.push('/admin/account/new')
-      //   } else {
-      //     this.$swal.fire(
-      //       'No Permission!',
-      //       'Only manager can do this action!',
-      //       'warning'
-      //     )
-      //   }
-    },
-    updateAccount() {
-      if (this.$store.getters.isManager) {
-        this.$router.push('/admin/account/update')
-      } else {
-        this.$swal.fire(
-          'No Permission!',
-          'Only manager can do this action!',
-          'warning'
-        )
-      }
-    },
-    deleteAccount() {
+    // newAccount() {
+    //   this.$router.push('/admin/account/new')
+    //   //   if (this.$store.getters.isManager) {
+    //   //     this.$router.push('/admin/account/new')
+    //   //   } else {
+    //   //     this.$swal.fire(
+    //   //       'No Permission!',
+    //   //       'Only manager can do this action!',
+    //   //       'warning'
+    //   //     )
+    //   //   }
+    // },
+    // updateAccount() {
+    //   if (this.$store.getters.isManager) {
+    //     this.$router.push('/admin/account/update')
+    //   } else {
+    //     this.$swal.fire(
+    //       'No Permission!',
+    //       'Only manager can do this action!',
+    //       'warning'
+    //     )
+    //   }
+    // },
+    deleteAccount(item) {
       
       this.$swal({
         title: 'Are you sure?',
@@ -111,27 +109,23 @@ export default {
         cancelButtonText: 'No, cancel !',
         closeOnConfirm: false,
         closeOnCancel: false,
+        background: '#242424',
       }).then((willDelete) => {
-        if (willDelete) {
-            this.$swal('This account has been deleted!', {
-              icon: 'success',
-            })
-        } 
+        if (willDelete.isConfirmed) {
+          this.$axios.delete(`/users/${item.id}`).then((res) => {
+            // console.log(res)
+            if (res.status === 200) {
+              this.$swal({
+                text: 'This account has been deleted!',
+                background: '#242424',
+                // color:'blue'
+              })
+              this.$fetch()
+            }
+          })
+        }
       })
-      //   if (this.$store.getters.isManager) {
-      //     // this.$router.push('/admin/account/update')
-      //     this.$swal.fire(
-      //       'No Permission!',
-      //       'Only manager can do this action!',
-      //       'warning'
-      //     )
-      //   } else {
-      //     this.$swal.fire(
-      //       'No Permission!',
-      //       'Only manager can do this action!',
-      //       'warning'
-      //     )
-      //   }
+      
     },
   },
   

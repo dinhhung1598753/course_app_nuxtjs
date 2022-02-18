@@ -2,11 +2,11 @@
   <v-app>
     <v-card class="ma-auto" width="450">
       <v-card-title class="d-flex align-center justify-center py-7">
-        <h2 class="heading mainstream--text">SetSail</h2>
+        <h2 class="heading mainstream--text">HStudy</h2>
       </v-card-title>
       <v-card-text>
         <p class="d-flex align-center justify-center mb-2 title">
-          Welcome to SetSail! 👋🏻
+          Welcome to HStudy! 👋🏻
         </p>
       </v-card-text>
 

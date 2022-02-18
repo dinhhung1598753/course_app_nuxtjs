@@ -51,12 +51,12 @@ export default {
         {
           count: '10',
           title: 'Account',
-          to: "/admin/accounts"
+          to: "/admin/account"
         },
         {
           count: '10',
           title: 'Course',
-          to: "/admin/courses"
+          to: "/admin/course"
         },{
           count: '10',
           title: 'Lesson',

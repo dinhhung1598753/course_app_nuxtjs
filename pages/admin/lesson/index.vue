@@ -39,7 +39,7 @@
         </v-btn> -->
         <v-dialog v-model="dialog" persistent max-width="600px">
           <template #activator="{ on, attrs }">
-            <v-btn color="primary" dark v-bind="attrs" v-on="on">
+            <v-btn color="primary" dark v-bind="attrs" v-on="on" :disabled="!courseKey">
               New Lesson
             </v-btn>
           </template>
@@ -85,7 +85,7 @@
                     <v-file-input
                       :rules="rules"
                       accept="image/png, image/jpeg, image/bmp"
-                      placeholder="Pick an avatar"
+                      :placeholder="lesson.avatar == '' ? lesson.avatar : 'Pick an avatar'"
                       prepend-icon="mdi-camera"
                       label="Avatar"
                       v-model="file"
@@ -111,10 +111,10 @@
 
     <template #[`item.actions`]="{ item }">
       <!-- <v-icon small @click="viewTour(item)"> mdi-eye-outline </v-icon> -->
-      <v-icon small @click="updateCourse(item)">
+      <v-icon small @click="updateLesson(item)">
         mdi-square-edit-outline
       </v-icon>
-      <v-icon small @click="deleteCourse(item)"> mdi-trash-can-outline </v-icon>
+      <v-icon small @click="deleteLesson(item)"> mdi-trash-can-outline </v-icon>
     </template>
   </v-data-table>
 </template>
@@ -144,6 +144,7 @@ export default {
         name: '',
         description: '',
         videoId: '',
+        avatar: ''
       },
       isUpdate: false,
       courseKey: '',
@@ -224,7 +225,7 @@ export default {
       this.isUpdate = false
       this.lesson = {}
     },
-    deleteCourse(item) {
+    deleteLesson(item) {
       this.$swal({
         title: 'Are you sure?',
         text: 'Once deleted, you will not be able to recover this course',
@@ -254,8 +255,9 @@ export default {
         }
       })
     },
-    updateCourse(item) {
-      this.course = item
+    updateLesson(item) {
+      console.log(item)
+      this.lesson = item
       this.dialog = true
       this.isUpdate = true
     },

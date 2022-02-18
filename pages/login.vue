@@ -2,11 +2,11 @@
   <v-app>
     <v-card class="ma-auto" width="450">
       <v-card-title class="d-flex align-center justify-center py-7">
-        <h2 class="heading mainstream--text">SetSail</h2>
+        <h2 class="heading mainstream--text">HStudy</h2>
       </v-card-title>
       <v-card-text>
         <p class="d-flex align-center justify-center mb-2 title">
-          Welcome to SetSail! 👋🏻
+          Welcome to HStudy! 👋🏻
         </p>
         <p class="d-flex align-center justify-center mb-2">
           Please login to your account and start your work
@@ -107,34 +107,14 @@ export default {
               password: this.password,
             },
           })
-          // console.log(res.data)
+          console.log(res.data)
           await this.$auth.setToken('local', 'Bearer ' + res.data)
-          //   await this.$auth.setRefreshToken('local', res.data.refresh);
-          await this.$auth.setUserToken(res.data)
+          // await this.$auth.setUserToken(res.data)
           this.$router.push('/')
         } catch (err) {
           this.error = err.data
         }
       }
-      // try {
-      //   await this.$auth
-      //     .loginWith('local', {
-      //       data: {
-      //         email: this.email,
-      //         password: this.password,
-      //       },
-      //     })
-      //     .then((res) => {
-      //         // console.log(res.data)
-      //       this.$auth.setToken('local', 'Bearer ' + res.data)
-      //       //   await this.$auth.setRefreshToken('local', res.data.refresh);
-      //       this.$auth.setUserToken(res.data)
-      //       this.$router.push('/')
-      //     })
-      //   // console.log(res)
-      // } catch (err) {
-      //   this.error = err.data
-      // }
     },
   },
 }
