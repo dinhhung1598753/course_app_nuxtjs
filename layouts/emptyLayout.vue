@@ -1,5 +1,5 @@
 <template>
-  <v-main>
+  <v-main >
     <!-- <notifications group="foo" /> -->
     <Nuxt/>
   </v-main>

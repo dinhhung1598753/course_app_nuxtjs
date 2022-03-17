@@ -1,11 +1,12 @@
 <template>
-  <v-app dark>
+  <v-app dark color="background">
     <v-navigation-drawer
       v-model="drawer"
       :mini-variant="miniVariant"
       :clipped="clipped"
       fixed
       app
+      color="background"
     >
       <v-list>
         <v-list-item
@@ -24,14 +25,15 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar :clipped-left="clipped" fixed app>
+    <v-app-bar :clipped-left="clipped" fixed app color="background">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-
       <v-toolbar-title v-text="title" />
       <v-spacer />
-      <v-btn v-if="isTeacherOrManager" dark :to="to" @click="changeViewAdmin">
-        {{ this.to === "/admin" ? "Admin": "Home"}}
+      <v-btn to="/chat">
+        <v-icon>mdi-facebook-messenger</v-icon><span class=message-count>1</span>
       </v-btn>
+       &nbsp;&nbsp;&nbsp;&nbsp;
+      <v-btn v-if="isTeacherOrManager" dark to="/admin"> Admin </v-btn>
       &nbsp;&nbsp;&nbsp;&nbsp;
       <div class="text-center">
         <v-menu offset-y>
@@ -51,6 +53,9 @@
             <v-list-item to="/abc" router>
               <v-list-item-title>Đổi mật khẩu</v-list-item-title>
             </v-list-item>
+            <v-list-item @click="changeTheme">
+              <v-list-item-title>{{ themeDark ? "Set Light": "Set Dark"}}</v-list-item-title>
+            </v-list-item>
             <v-list-item @click="logout">
               <v-list-item-title>Đăng xuất</v-list-item-title>
             </v-list-item>
@@ -59,6 +64,20 @@
       </div>
     </v-app-bar>
     <v-main>
+      <v-alert
+        border="left"
+        colored-border
+        color="deep-purple accent-4"
+        elevation="2"
+        class="alert-notification"
+        :to="`/message/`"
+        :style="{'display': alert.isShow ? 'unset': 'none', opacity: alert.opacity}"
+      >
+        <span>
+          {{ alert.title }} </span
+        ><br />
+        <span class="message-alert">{{ alert.subtitle }} </span>
+      </v-alert>
       <v-container>
         <Nuxt />
       </v-container>
@@ -76,58 +95,10 @@ export default {
   middleware: ['isAuthenticated'],
   data() {
     return {
-      clipped: false,
+      clipped: true,
       drawer: false,
       fixed: false,
 
-      managerItems: [
-        {
-          icon: 'mdi-apps',
-          title: 'Admin',
-          to: '/admin',
-        },
-        {
-          icon: 'mdi-account-group-outline',
-          title: 'Account',
-          to: '/admin/account',
-        },
-        {
-          icon: 'mdi-text-box-multiple',
-          title: 'Course',
-          to: '/admin/course',
-        },
-        {
-          icon: 'mdi-file-document-outline',
-          title: 'Lesson',
-          to: '/admin/lesson',
-        },
-        
-      ],
-      teacherItems: [
-        {
-          icon: 'mdi-apps',
-          title: 'Admin',
-          to: '/admin',
-        },
-        {
-          icon: 'mdi-text-box-multiple',
-          title: 'Course',
-          to: '/admin/course',
-        },
-        {
-          icon: 'mdi-apps',
-          title: 'Lesson',
-          to: '/admin/lesson',
-        },
-        
-      ],
-      // studentItems: [
-      //   {
-      //     icon: 'mdi-apps',
-      //     title: 'Welcome',
-      //     to: '/',
-      //   },
-      // ],
       items: [
         {
           icon: 'mdi-apps',
@@ -158,45 +129,61 @@ export default {
       title: 'HStudy',
       fullName: '',
       isTeacherOrManager: false,
-      to: '/admin'
+      to: '/admin',
+      themeDark: this.$vuetify.theme.dark,
+      alert: {
+        title: '',
+        subtitle: '',
+        opacity: 1,
+        isShow: false
+      },
     }
   },
   created() {
-    this.isTeacherOrManager = this.$store.getters.isManager || this.$store.getters.isTeacher
-    // if(this.$store.getters.isStudent){
-    //   try {
-    //     this.$axios
-    //       .get('/users/course'
-    //       )
-    //       .then((res) => {
-    //         console.log("data: ",res.data[0])
-    //         this.items = res.data
-    //       })
-    //   } catch (err) {
-    //     return err
-    //   }
-    // }
-    // else{
-    // this.items = this.$store.getters.isManager
-    //   ? this.managerItems
-    //   : this.$store.getters.isTeacher
-    //   ? this.teacherItems
-    //   : this.studentItems
-    // }
+    this.isTeacherOrManager =
+      this.$store.getters.isManager || this.$store.getters.isTeacher
 
     this.fullName = this.$store.getters.getUserInfo.fullName
+  },
+  beforeMount() {
+    if (!this.$store.socket || !this.$store.socket.connected) {
+      this.$store.socket = this.$nuxtSocket({
+        name: 'work',
+        // channel:'/',
+        // teardown: false,
+        reconnection: false,
+      })
+      this.$store.socket.userId = this.$store.getters.getUserInfo.id
+      this.$store.socket.userName = this.$store.getters.getUserInfo.fullName
+      this.$store.socket.emit('send-info', {
+        userId: this.$store.getters.getUserInfo.id,
+        userName: this.$store.getters.getUserInfo.fullName,
+      })
+      console.log('connect socket')
+    }
+    this.$store.socket.on('message',  (data) => {
+      this.alert.opacity = 1;
+      this.alert.title = data.name;
+      this.alert.subtitle = data.message;
+      this.alert.isShow = true;
+      setInterval(()=>{
+        this.alert.opacity = 0.5;
+      })
+      setTimeout(()=>{
+        this.alert.isShow = false;
+      }, 2000)
+    })
   },
   methods: {
     logout() {
       this.$auth.logout()
       this.$router.push('/login')
     },
-    changeViewAdmin(){
-      this.items = this.$store.getters.isManager
-      ? this.managerItems
-      : this.teacherItems;
-      this.to = this.to === "/admin" ? "/":"/admin"
-    }
+
+    changeTheme() {
+      this.$vuetify.theme.dark = !this.$vuetify.theme.dark
+      this.themeDark = this.$vuetify.theme.dark
+    },
   },
 }
 </script>
@@ -206,4 +193,42 @@ export default {
   bottom: 0;
   width: 100%;
 } */
+
+.alert-notification {
+  width: 300px;
+  height: 80px;
+  position: fixed;
+  right: 0;
+  bottom: 50px;
+  z-index: 100000000;
+}
+
+.message-alert {
+  width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  font-size: 14px;
+  opacity: 0.58;
+  font-weight: 300;
+  
+}
+
+.message-count {
+      color: white;
+    font-weight: 400;
+    position: absolute;
+    margin-bottom: 14px;
+    margin-left: 22px;
+    
+    /* border: 2px solid red; */
+
+    border-radius: 16px;
+    font-size: 12px;
+    min-width: 14px;
+    background-color: red;
+    padding-left: 2px;
+}
+
+
 </style>

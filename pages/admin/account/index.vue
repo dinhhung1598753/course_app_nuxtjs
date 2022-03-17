@@ -42,7 +42,7 @@
 <script>
 export default {
   name: 'AccountPage',
-  
+  layout: "adminLayout",
   data() {
     return {
       headers: [

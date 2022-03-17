@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-card
-      v-for="(item, index) in items"
+      v-for="(item, index) in (role ? managerItems : teacherItems)"
       :key="index"
       :class="{ 'course-card': true }"
       color="#26c6da"
@@ -31,9 +31,9 @@
           <v-row align="center" justify="end">
             <!-- <v-icon class="mr-1"> mdi-heart </v-icon> -->
             <!-- <span class="subheading mr-2">256</span> -->
-            <span class="mr-1">·</span>
+            <!-- <span class="mr-1">·</span>
             <v-icon class="mr-1"> mdi-share-variant </v-icon>
-            <span class="subheading">{{item.count}}</span>
+            <span class="subheading">{{item.count}}</span> -->
           </v-row>
         </v-list-item>
       </v-card-actions>
@@ -44,15 +44,10 @@
 <script>
 export default {
   name: 'AdminPage',
-  // layout: "adminLayout",
+  layout: "adminLayout",
   data() {
     return {
-      items: [
-        {
-          count: '10',
-          title: 'Account',
-          to: "/admin/account"
-        },
+      teacherItems: [
         {
           count: '10',
           title: 'Course',
@@ -64,9 +59,34 @@ export default {
         },
         
       ],
+      managerItems: [
+        {
+          count: '',
+          title: 'Account',
+          to: "/admin/account"
+        },
+        {
+          count: '',
+          title: 'Course',
+          to: "/admin/course"
+        },{
+          count: '',
+          title: 'Lesson',
+          to: "/admin/lesson"
+        },
+        
+      ],
       role : this.$store.getters.isManager
     }
   },
+  // created(){
+  //   if(this.role){
+  //     for(let i =0 ; i < this.managerItems.length; i ++){
+  //       this.$axios.get('/').then(x=> this.managerItems[i].count = x)
+  //     }
+  //   } 
+    
+  // }
 }
 </script>
 <style scoped>

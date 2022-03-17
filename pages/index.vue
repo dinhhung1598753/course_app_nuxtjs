@@ -33,12 +33,9 @@
             <v-list-item-title>{{ item.user.fullName }}</v-list-item-title>
           </v-list-item-content>
 
-          <v-row align="center" justify="end">
-            <v-icon class="mr-1"> mdi-heart </v-icon>
-            <span class="subheading mr-2">256</span>
-            <span class="mr-1">·</span>
+          <v-row class="count-sub" align="center" justify="end">
             <v-icon class="mr-1"> mdi-share-variant </v-icon>
-            <span class="subheading">45</span>
+            <span class="subheading">{{item.countSubscribe}}</span>
           </v-row>
         </v-list-item>
       </v-card-actions>
@@ -49,7 +46,7 @@
 <script>
 export default {
   name: 'IndexPage',
-  middleware: ['isAuthenticated'],
+  // middleware: ['isAuthenticated'],
   data() {
     return {
       color: '#1F7087',
@@ -70,6 +67,9 @@ export default {
       } catch (err) {
         return err
       }
+  },
+  mounted(){
+    
   }
 }
 </script>
@@ -87,5 +87,9 @@ export default {
 
 .top{
   margin: 25px;
+}
+
+.count-sub{
+  flex: none;
 }
 </style>

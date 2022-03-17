@@ -1,6 +1,6 @@
 <template>
-  <v-app>
-    <v-card class="ma-auto" width="450">
+  <v-app background >
+    <v-card class="ma-auto" width="450" color="background">
       <v-card-title class="d-flex align-center justify-center py-7">
         <h2 class="heading mainstream--text">HStudy</h2>
       </v-card-title>
@@ -34,11 +34,13 @@
             v-model="password"
             :rules="passwordRules"
           />
-          <v-btn type="submit" block class="my-6 bg-gradient-primary"
+          <span v-text="error" style="color: red; text-align: center"></span>
+          <v-btn type="submit" block class="my-6 bg-gradient-primary red--text" 
             >Login</v-btn
           >
+          
         </v-form>
-        <v-btn to="/register" block class="my-6 bg-gradient-primary"
+        <v-btn to="/register" block class="my-6 bg-gradient-primary  red--text"
           >Register</v-btn
         >
       </v-card-text>
@@ -107,12 +109,12 @@ export default {
               password: this.password,
             },
           })
-          console.log(res.data)
-          await this.$auth.setToken('local', 'Bearer ' + res.data)
+          console.log("res:" ,res.data)
+          // await this.$auth.setToken('local', 'Bearer ' + res.data)
           // await this.$auth.setUserToken(res.data)
           this.$router.push('/')
-        } catch (err) {
-          this.error = err.data
+        } catch (error) {
+          this.error = "Incorrect Email or Password"
         }
       }
     },

@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-card class="ma-auto" width="450">
+    <v-card class="ma-auto" width="450" color="background">
       <v-card-title class="d-flex align-center justify-center py-7">
         <h2 class="heading mainstream--text">HStudy</h2>
       </v-card-title>
@@ -115,11 +115,11 @@
           </v-container>
         </v-form>
 
-        <v-btn  block class="my-6 bg-gradient-primary" @click="register"
+        <v-btn  block class="my-6 bg-gradient-primary  red--text" @click="register"
           >Register</v-btn
         >
 
-        <v-btn  block class="my-6 bg-gradient-primary" to="/login"
+        <v-btn  block class="my-6 bg-gradient-primary  red--text" to="/login"
           >Login</v-btn
         >
       </v-card-text>

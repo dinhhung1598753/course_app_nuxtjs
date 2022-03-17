@@ -18,6 +18,11 @@ export const getters = {
         return state.auth.user.role === 'STUDENT';
       }
   };
+
+  export const state = () => ({
+    
+  })
+  
   
   // export const state = () => ({
   //   selectedTour: {}

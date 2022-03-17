@@ -16,9 +16,9 @@
           label="Standard"
           item-text="name"
           item-value="key"
-          @change="changeCourse"
           single-line
           hide-details
+          @change="changeCourse"
         ></v-select>
         &nbsp;&nbsp;&nbsp;&nbsp;
         <v-text-field
@@ -39,7 +39,13 @@
         </v-btn> -->
         <v-dialog v-model="dialog" persistent max-width="600px">
           <template #activator="{ on, attrs }">
-            <v-btn color="primary" dark v-bind="attrs" v-on="on" :disabled="!courseKey">
+            <v-btn
+              color="primary"
+              dark
+              v-bind="attrs"
+              :disabled="!courseKey"
+              v-on="on"
+            >
               New Lesson
             </v-btn>
           </template>
@@ -83,13 +89,22 @@
                   </v-col>
                   <v-col cols="12">
                     <v-file-input
-                      :rules="rules"
+                      v-model="file"
                       accept="image/png, image/jpeg, image/bmp"
-                      :placeholder="lesson.avatar == '' ? lesson.avatar : 'Pick an avatar'"
+                      :placeholder="
+                        lesson.avatar == '' ? lesson.avatar : 'Pick an avatar'
+                      "
                       prepend-icon="mdi-camera"
                       label="Avatar"
-                      v-model="file"
+                      @change="onFileChange"
                     ></v-file-input>
+                    <div class="d-flex flex-column justify-space-between align-center">
+                    <v-img
+                      :aspect-ratio="16 / 9"
+                      width="200"
+                      :src="fileUrl"
+                    />
+                    </div>
                   </v-col>
                 </v-row>
               </v-container>
@@ -122,7 +137,7 @@
 <script>
 export default {
   name: 'CoursePage',
-
+  layout: 'adminLayout',
   data() {
     return {
       dialog: false,
@@ -144,16 +159,18 @@ export default {
         name: '',
         description: '',
         videoId: '',
-        avatar: ''
+        avatar: '',
       },
       isUpdate: false,
       courseKey: '',
       lessons: [],
       file: null,
+      fileUrl: '',
     }
   },
   fetch() {
     try {
+      
       this.$axios
         .get('/lessons', {
           params: {
@@ -171,6 +188,16 @@ export default {
     try {
       this.$axios.get('/courses').then((courses) => {
         this.courses = courses.data.courses
+        this.courseKey = this.courses[0].key
+         this.$axios
+        .get('/lessons', {
+          params: {
+            courseKey: this.courseKey,
+          },
+        })
+        .then((res) => {
+          this.lessons = res.data
+        })
       })
     } catch (err) {
       return err
@@ -194,8 +221,7 @@ export default {
         formData.append('description', this.lesson.description)
         formData.append('videoId', this.lesson.videoId)
 
-
-        this.$axios.post('/lessons',formData, {}).then((res) => {
+        this.$axios.post('/lessons', formData, {}).then((res) => {
           if (res.status === 200) {
             this.$swal.fire('Success', 'Tạo mới bài học thành công', 'OK')
             this.dialog = false
@@ -207,12 +233,20 @@ export default {
           }
         })
       } else {
-        this.$axios.put('/lessons', this.lesson).then((res) => {
+        const formData = new FormData()
+        formData.append('imageFile', this.file)
+        formData.append('key', this.lesson.key)
+        formData.append('name', this.lesson.name)
+        formData.append('courseKey', this.courseKey)
+        formData.append('description', this.lesson.description)
+        formData.append('videoId', this.lesson.videoId)
+
+        this.$axios.put('/lessons', formData, {}).then((res) => {
           if (res.status === 200) {
             this.$swal.fire('Success', 'Cập nhật bài học thành công', 'OK')
             this.dialog = false
             this.lesson = {}
-            this.isUpdate = false
+            this.file = null
             this.$fetch()
           } else {
             this.$swal('Error', res.message, 'warning')
@@ -223,12 +257,20 @@ export default {
     closeDialog() {
       this.dialog = false
       this.isUpdate = false
-      this.lesson = {}
+      this.lesson ={
+        key: '',
+        name: '',
+        description: '',
+        videoId: '',
+        avatar: '',
+      }
+      this.file = null
+      this.fileUrl= ''
     },
     deleteLesson(item) {
       this.$swal({
         title: 'Are you sure?',
-        text: 'Once deleted, you will not be able to recover this course',
+        text: 'Once deleted, you will not be able to recover this lesson',
         icon: 'warning',
         type: 'warning',
         showCancelButton: true,
@@ -241,11 +283,11 @@ export default {
         background: '#242424',
       }).then((willDelete) => {
         if (willDelete.isConfirmed) {
-          this.$axios.delete(`/courses/${item.key}`).then((res) => {
+          this.$axios.delete(`/lessons/${item.key}`).then((res) => {
             // console.log(res)
             if (res.status === 200) {
               this.$swal({
-                text: 'This course has been deleted!',
+                text: 'This lesson has been deleted!',
                 background: '#242424',
                 // color:'blue'
               })
@@ -256,10 +298,25 @@ export default {
       })
     },
     updateLesson(item) {
-      console.log(item)
       this.lesson = item
       this.dialog = true
       this.isUpdate = true
+      this.fileUrl = item.avatar
+    },
+    createImage(file) {
+      const reader = new FileReader()
+
+      reader.onload = (e) => {
+        this.fileUrl = e.target.result
+      }
+      reader.readAsDataURL(file)
+    },
+    onFileChange(file) {
+      this.fileUrl = ''
+      if (!file) {
+        return
+      }
+      this.createImage(file)
     },
   },
 }

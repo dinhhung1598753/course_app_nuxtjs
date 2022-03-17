@@ -92,7 +92,7 @@
 <script>
 export default {
   name: 'CoursePage',
-
+layout: "adminLayout",
   data() {
     return {
       dialog: false,
